@@ -1,0 +1,88 @@
+version: "3"
+
+services:
+  nginx:
+    build: ./requirements/nginx
+    image: nginx
+    container_name: nginx
+    ports:
+      - "443:443"
+    volumes:
+      - wordpress:/var/www/html:ro
+      - ./requirements/nginx/conf:/etc/nginx/conf.d:ro
+      - ./requirements/nginx/conf/ssl:/etc/ssl/certs:ro
+    networks:
+      - internal
+    depends_on:
+      - wordpress
+
+  wordpress:
+    build: ./requirements/wordpress
+    image: wordpress
+    container_name: wordpress
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - internal
+    depends_on:
+      - mariadb
+    env_file:
+      - .env
+
+  mariadb:
+    image: mariadb:10.5
+    container_name: mariadb
+    volumes:
+      - mariadb:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - internal
+
+  # Bonus services
+  redis:
+    build: ./requirements/bonus/redis
+    image: redis
+    container_name: redis
+    volumes:
+      - redis:/data
+    networks:
+      - internal
+
+  ftp:
+    build: ./requirements/bonus/ftp
+    image: vsftpd
+    container_name: ftp
+    volumes:
+      - wordpress:/var/www/html:rw
+    ports:
+      - "21:21"
+      - "33000-33010:33000-33010"
+    networks:
+      - internal
+    depends_on:
+      - wordpress
+    env_file:
+      - .env
+
+  adminer:
+    build: ./requirements/bonus/adminer
+    image: adminer
+    container_name: adminer
+    ports:
+      - "8080:80"
+    networks:
+      - internal
+    depends_on:
+      - mariadb
+
+volumes:
+  wordpress:
+  mariadb:
+  redis:
+
+networks:
+  internal:
