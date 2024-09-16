@@ -26,4 +26,6 @@ exec-bash:
 clean:
 	docker system prune -a
 
-.PHONY: all build up down restart ps logs exec-bash
+re: down build up
+
+.PHONY: all build up down restart ps logs exec-bash re

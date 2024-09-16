@@ -1,26 +1,19 @@
-#!/bin/bash
+#!bin/sh
 
-# 環境変数が設定されているかチェック
-if [ -z "$WORDPRESS_DB_NAME" ] || \
-   [ -z "$WORDPRESS_DB_USER" ] || \
-   [ -z "$WORDPRESS_DB_PASSWORD" ] || \
-   [ -z "$WORDPRESS_DB_HOST" ]; then
-  echo "ERROR: WordPress database environment variables are not set."
-  exit 1
+cd /var/www/html/wordpress;
+if ! wp --allow-root core is-installed; then
+	wp core download	--allow-root; # download core files
+	wp config create	--allow-root --dbname=${MYSQL_DATABASE} --dbuser=${MYSQL_USER} --dbpass=${MYSQL_PASSWORD} --dbhost=mariadb:3306; # create the config file of wordpress that contain database info
+	wp core install		--allow-root --url=${WP_URL} --title=${WP_TITLE} --admin_user=${WP_ADMIN} --admin_password=${WP_ADMIN_PASSWD} --admin_email=${WP_ADMIN_EMAIL}; # create new wordpress website
 fi
 
-# wp-config.php を生成
-if [ ! -f /var/www/html/wp-config.php ]; then
-  cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php
-  sed -i "s/database_name_here/$WORDPRESS_DB_NAME/g" /var/www/html/wp-config.php
-  sed -i "s/username_here/$WORDPRESS_DB_USER/g" /var/www/html/wp-config.php
-  sed -i "s/password_here/$WORDPRESS_DB_PASSWORD/g" /var/www/html/wp-config.php
-  sed -i "s/localhost/$WORDPRESS_DB_HOST/g" /var/www/html/wp-config.php
+wp user list --allow-root --path=/var/www/html/wordpress --field=user_login | grep -q ${WP_ADMIN}
+if [ $? != 0 ]; then
+	wp user create --allow-root ${WP_ADMIN} ${WP_ADMIN_EMAIL} --role=administrator --user_pass=${WP_ADMIN_PASSWD} --path=/var/www/html/wordpress; # create first user (administrator)
+fi
+wp user list --allow-root --path=/var/www/html/wordpress --field=user_login | grep -q ${WP_USER}
+if [ $? != 0 ]; then
+	wp user create --allow-root ${WP_USER} ${WP_USER_EMAIL} --role=editor --user_pass=${WP_USER_PASSWD} --path=/var/www/html/wordpress; # create second user (editor)
 fi
 
-# php-fpm を起動
-exec php-fpm7.3 -F
-
-# その他の起動処理（必要があれば記述）
-
-# exec "$@"
+exec "$@"

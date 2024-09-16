@@ -1,24 +1,29 @@
-FROM debian:buster-slim
+FROM debian:bookworm
 
-# パッケージリストを更新
-RUN apt-get update
+ARG MYSQL_DATABASE
+ARG MYSQL_USER
+ARG MYSQL_PASSWORD
+ARG MYSQL_ROOT_PASSWORD
 
-# 必要最低限のパッケージのみインストール
-RUN apt-get install -y mariadb-server mariadb-client
+# パッケージリストを更新し、mariadb-serverとmariadb-clientをインストール
+RUN apt -y update && apt -y upgrade
+RUN apt -y install mariadb-server mariadb-client
 
 # 不要なファイルを削除
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN rm -rf /var/lib/apt/lists/*
 
-# 設定ファイルをコピー (後述)
-COPY ./conf/my.cnf /etc/mysql/mariadb.conf.d/my.cnf
+RUN mkdir -p /var/lib/mysql /var/run/mysqld
+RUN chown -R mysql:mysql /var/lib/mysql /var/run/mysqld
+RUN chmod 777 /var/run/mysqld
 
-# データベースの初期化 & ルートパスワード設定
-COPY ./tools/entrypoint.sh /docker-entrypoint-initdb.d/
-RUN chmod +x /docker-entrypoint-initdb.d/*
+COPY ./conf/mariadb.cnf /etc/mysql/mariadb.conf.d/
+RUN chmod 644 /etc/mysql/mariadb.conf.d/mariadb.cnf
+COPY ./conf/createdb.sql /usr/local/bin/
+
+COPY ./tools/entrypoint.sh  /usr/local/bin/
+RUN bash /usr/local/bin/entrypoint.sh
 
 # ポートを公開
 EXPOSE 3306
 
-# コマンドはデフォルトを使用
-#ENTRYPOINT ["docker-entrypoint.sh"]
-#CMD ["mysqld"]
+ENTRYPOINT ["mysqld_safe"]

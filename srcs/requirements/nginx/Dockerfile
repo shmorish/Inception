@@ -1,30 +1,31 @@
-# Debian Buster のイメージを取得
-FROM debian:buster-slim
+FROM debian:bookworm
 
-# パッケージリストを更新
-RUN apt-get update
+ARG DOMAIN_NAME
+ARG CERTS_KEY
+ARG CERTS_CRT
 
-# nginx をインストール
-RUN apt-get install -y \
-    nginx 
+# install nginx and openssl
+RUN apt -y update && apt -y upgrade
+RUN apt -y install nginx openssl
 
-# 不要なファイルを削除
-RUN apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# SSL証明書と秘密鍵の生成（組織と部門を省略）
+RUN chmod 700 /etc/ssl/private
+RUN openssl req -x509 -sha256 -nodes \
+    -days 365 \
+    -newkey rsa:2048 \
+    -keyout ${CERTS_KEY} \
+    -out ${CERTS_CRT} \
+    -subj "/C=JP/ST=Tokyo/L=Shinjuku/CN=shmorish"
 
-# nginx のデフォルト設定ファイルを削除
-RUN rm /etc/nginx/sites-enabled/default
+# TLS1.3のみを有効にする
+RUN sed -i 's/ssl_protocols.*/ssl_protocols TLSv1.3;/' /etc/nginx/nginx.conf
 
-# netcat をインストール
-RUN apt-get update && apt-get install -y netcat-openbsd
+# nginxの設定ファイルをコピー
+COPY ./conf/nginx.conf /etc/nginx/conf.d/
+RUN sed -i "s|INSERT_DOMAIN_NAME_HERE|${DOMAIN_NAME}|g" /etc/nginx/conf.d/nginx.conf
+RUN sed -i "s|INSERT_KEY_PATH_HERE|${CERTS_KEY}|g" /etc/nginx/conf.d/nginx.conf
+RUN sed -i "s|INSERT_CRT_PATH_HERE|${CERTS_CRT}|g" /etc/nginx/conf.d/nginx.conf
 
-# 設定ファイルをコピー
-COPY ./conf/nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 443
 
-# エントリポイントを設定
-COPY ./tools/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
-
-# ポートを公開
-EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
