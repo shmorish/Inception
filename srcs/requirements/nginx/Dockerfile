@@ -1,8 +1,4 @@
-FROM debian:bookworm
-
-ARG DOMAIN_NAME
-ARG CERTS_KEY
-ARG CERTS_CRT
+FROM debian:bullseye
 
 # install nginx and openssl
 RUN apt -y update && apt -y upgrade
