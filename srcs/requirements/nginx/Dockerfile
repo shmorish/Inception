@@ -16,11 +16,13 @@ RUN openssl req -x509 -sha256 -nodes \
 # TLS1.3のみを有効にする
 RUN sed -i 's/ssl_protocols.*/ssl_protocols TLSv1.3;/' /etc/nginx/nginx.conf
 
+RUN mkdir -p /run/nginx
+RUN chmod 755 /run/nginx
+
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt -subj "/C=JP/ST=Tokyo/L=Shinjuku/O=42Tokyo/OU=42Tokyo/CN=localhost"
+
 # nginxの設定ファイルをコピー
 COPY ./conf/nginx.conf /etc/nginx/conf.d/
-RUN sed -i "s|INSERT_DOMAIN_NAME_HERE|${DOMAIN_NAME}|g" /etc/nginx/conf.d/nginx.conf
-RUN sed -i "s|INSERT_KEY_PATH_HERE|${CERTS_KEY}|g" /etc/nginx/conf.d/nginx.conf
-RUN sed -i "s|INSERT_CRT_PATH_HERE|${CERTS_CRT}|g" /etc/nginx/conf.d/nginx.conf
 
 EXPOSE 443
 
