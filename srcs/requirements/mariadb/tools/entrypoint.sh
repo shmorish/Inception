@@ -18,9 +18,11 @@ server_start() {
 
 server_start
 
+mysqld_safe --skip-grant-tables &
+
 if [ ! -d "/var/lib/mysql/wordpress" ]; then
     mysql << EOS
-        CREATE DATABASE $MYSQL_DATABASE;
+        CREATE DATABASE if not exists  $MYSQL_DATABASE;
         CREATE USER '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASS';
         GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER'@'%';
         ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASS';

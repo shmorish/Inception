@@ -3,9 +3,6 @@ FROM debian:bullseye
 RUN apt -y update && apt -y upgrade
 RUN apt -y install wget php7.4-fpm php7.4-mysql mariadb-client curl
 
-# redis chache (bonus)
-RUN apt -y install php7.4-redis redis-tools
-
 # PHPの設定ファイルをバックアップ
 RUN mv /etc/php/7.4/fpm/pool.d/www.conf /etc/php/7.4/fpm/pool.d/www.conf.bak
 # PHPの設定ファイル
@@ -35,6 +32,7 @@ COPY ./tools/entrypoint.sh /usr/local/bin/
 RUN chmod 755 /usr/local/bin/entrypoint.sh
 
 # php-fpm の起動
-ENTRYPOINT  [ "bash", "/usr/local/bin/entrypoint.sh" ]
+# ENTRYPOINT  [ "bash", "/usr/local/bin/entrypoint.sh" ]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 CMD ["php-fpm7.4", "-F"]

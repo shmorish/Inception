@@ -15,10 +15,13 @@ COPY ./conf/mariadb.cnf /etc/mysql/
 RUN chmod 644 /etc/mysql/mariadb.cnf
 COPY ./conf/createdb.sql /usr/local/bin/
 
+VOLUME /var/lib/mysql
+
 EXPOSE 3306
 
 COPY ./tools/entrypoint.sh  /usr/local/bin/
 RUN chmod 755 /usr/local/bin/entrypoint.sh
+USER mysql
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 CMD ["mysqld"]
