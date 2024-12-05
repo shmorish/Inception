@@ -1,4 +1,5 @@
-FROM debian:latest
+FROM debian:bookworm
+# https://packages.debian.org/search?keywords=php
 
 RUN apt update && apt upgrade
 RUN apt install -y \
@@ -7,8 +8,8 @@ RUN apt install -y \
     curl
 
 COPY www.conf /etc/php/8.2/fpm/pool.d/.
+
 COPY script.sh /tmp/.
 RUN chmod +x /tmp/script.sh
-CMD [ "/tmp/script.sh" ]
 
-# CMD ["php-fpm8.2", "-F"]
+CMD [ "/tmp/script.sh" ]

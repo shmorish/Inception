@@ -23,10 +23,12 @@ server {
 	listen [::]:80 default_server;
 
 	# SSL configuration
-	#
-	# listen 443 ssl default_server;
-	# listen [::]:443 ssl default_server;
-	#
+	# listen 443 ssl;
+	# listen [::]:443 ssl;
+	# ssl_certificate /etc/nginx/ssl/shmorish.42.fr.crt;
+	# ssl_certificate_key /etc/nginx/ssl/shmorish.42.fr.key;
+	# ssl_protocols TLSv1.2 TLSv1.3;
+	# 
 	# Note: You should disable gzip for SSL traffic.
 	# See: https://bugs.debian.org/773332
 	#
