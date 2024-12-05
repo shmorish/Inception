@@ -20,8 +20,14 @@ ps:
 logs:
 	$(COMPOSE) logs -f
 
-exec-bash:
-	$(COMPOSE) exec -it ${ARG} bash
+x:
+	docker exec -it nginx bash
+
+wp:
+	docker exec -it wp-php bash
+
+db:
+	docker exec -it mariadb bash
 
 clean:
 	$(COMPOSE) down --rmi all --volumes --remove-orphans
@@ -29,6 +35,6 @@ clean:
 	rm -rf srcs/db
 	rm -rf srcs/web
 
-re: down build up
+re: down all
 
-.PHONY: all build up down restart ps logs exec-bash re
+.PHONY: all build up down restart ps logs re clean x wp db
