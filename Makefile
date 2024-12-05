@@ -4,15 +4,12 @@ COMPOSE := docker-compose -f srcs/docker-compose.yml
 all: build up
 
 build:
-	@mkdir -p srcs/data/mariadb
-	@mkdir -p srcs/data/wordpress
 	$(COMPOSE) build
 
 up:
 	$(COMPOSE) up -d
 
 down:
-	@rm -rf srcs/data/
 	$(COMPOSE) down
 
 restart: down up
@@ -29,6 +26,8 @@ exec-bash:
 clean:
 	$(COMPOSE) down --rmi all --volumes --remove-orphans
 	docker system prune -a
+	rm -rf srcs/db
+	rm -rf srcs/web
 
 re: down build up
 

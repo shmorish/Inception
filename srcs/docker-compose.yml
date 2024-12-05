@@ -1,75 +1,35 @@
-
 version: "3.8"
 
-# Volumes
-volumes:
-  mariadb:
-    name: mariadb
-    driver: local
-    driver_opts:
-      type: none
-      device: ./data/mariadb
-      o: bind
+services:
+  nginx:
+    build: requirements/nginx/.
+    container_name: nginx
+    depends_on:
+      - wordpress
+      - mariadb
+    ports:
+      - "80:80"
+    volumes:
+      - ./web:/var/www/html
+    networks:
+      inception:
   wordpress:
-    name: wordpress
-    driver: local
-    driver_opts:
-      type: none
-      device: ./data/wordpress
-      o: bind
+    build: requirements/wordpress/.
+    container_name: wp-php
+    depends_on:
+      - mariadb
+    volumes:
+      - ./web:/var/www/html
+    networks:
+      inception:
+  mariadb:
+    build: requirements/mariadb/.
+    container_name: mariadb
+    volumes:
+      - ./db:/var/lib/mysql
+    networks:
+      - inception
 
-# Networks
 networks:
   inception:
-    name: inception
     driver: bridge
-
-# Services (Containers)
-services:
-  mariadb:
-    container_name: mariadb
-    init: true
-    build:
-      context: ./requirements/mariadb
-      dockerfile: Dockerfile
-    env_file:
-      - .env
-    networks:
-      - inception
-    volumes:
-      - mariadb:/var/lib/mysql
-    restart: on-failure
-
-  wordpress:
-    container_name: wordpress
-    init: true
-    build:
-      context: ./requirements/wordpress
-      dockerfile: Dockerfile
-    env_file:
-      - .env
-    networks:
-      - inception
-    volumes:
-      - wordpress:/var/www/html
-    restart: on-failure
-    depends_on:
-      - mariadb
-
-  nginx:
-    container_name: nginx
-    init: true
-    build:
-      context: ./requirements/nginx
-      dockerfile: Dockerfile
-    env_file:
-      - .env
-    networks:
-      - inception
-    volumes:
-      - wordpress:/var/www/html
-    restart: on-failure
-    depends_on:
-      - mariadb
-      - wordpress
-
