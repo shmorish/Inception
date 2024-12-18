@@ -2,3 +2,4 @@
 .env
 srcs/db
 srcs/web
+secrets/

@@ -24,7 +24,7 @@ x:
 	docker exec -it nginx bash
 
 wp:
-	docker exec -it wp-php bash
+	docker exec -it wordpress bash
 
 db:
 	docker exec -it mariadb bash
