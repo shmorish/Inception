@@ -36,6 +36,9 @@ services:
       - WP_ADMIN=$WP_ADMIN
       - WP_ADMIN_PASS=$WP_ADMIN_PASS
       - WP_ADMIN_EMAIL=$WP_ADMIN_EMAIL
+      - WP_EDITOR_USER=$WP_EDITOR_USER
+      - WP_EDITOR_PASS=$WP_EDITOR_PASS
+      - WP_EDITOR_EMAIL=$WP_EDITOR_EMAIL
 
   mariadb:
     build: requirements/mariadb/

@@ -32,8 +32,8 @@ db:
 clean:
 	$(COMPOSE) down --rmi all --volumes --remove-orphans
 	docker system prune -a
-	rm -rf srcs/db
-	rm -rf srcs/web
+	rm -rf srcs/db || rm -rf ~/data/db
+	rm -rf srcs/web || rm -rf ~/data/web
 
 re: down all
 
