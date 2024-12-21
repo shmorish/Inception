@@ -7,9 +7,11 @@ RUN apt install -y \
     php-mysqli \
     curl
 
-COPY www.conf /etc/php/8.2/fpm/pool.d/.
+COPY www.conf /etc/php/8.2/fpm/pool.d/
 
-COPY script.sh /tmp/.
+COPY script.sh /tmp/
 RUN chmod +x /tmp/script.sh
+
+EXPOSE 9000
 
 CMD [ "/tmp/script.sh" ]

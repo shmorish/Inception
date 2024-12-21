@@ -117,12 +117,17 @@ function main {
             --allow-root \
             --path=$workdir
     fi
-    ./wp-cli.phar user create \
-        $WP_EDITOR_USER $WP_EDITOR_EMAIL \
-        --role=editor \
-        --user_pass=$WP_EDITOR_PASS \
-        --allow-root \
-        --path=$workdir
+    if ./wp-cli.phar user get $WP_EDITOR_USER --allow-root --path=$workdir; then
+        echo "Editor user already exists, skipping create"
+    else
+        echo "Creating editor user"
+        ./wp-cli.phar user create \
+            $WP_EDITOR_USER $WP_EDITOR_EMAIL \
+            --role=editor \
+            --user_pass=$WP_EDITOR_PASS \
+            --allow-root \
+            --path=$workdir
+    fi
 
 # usage: wp user create <user-login> <user-email> [--role=<role>] [--user_pass=<password>] [--user_registered=<yyyy-mm-dd-hh-ii-ss>] [--display_name=<name>] [--user_nicename=<nice_name>] [--user_url=<url>] [--nickname=<nickname>] [--first_name=<first_name>] [--last_name=<last_name>] [--description=<description>] [--rich_editing=<rich_editing>] [--send-email] [--porcelain]
 

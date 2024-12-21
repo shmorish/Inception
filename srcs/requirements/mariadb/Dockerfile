@@ -11,4 +11,7 @@ RUN mkdir -p /run/mysqld
 
 COPY script.sh /tmp/
 RUN chmod +x /tmp/script.sh
+
+EXPOSE 3306
+
 CMD ["/tmp/script.sh"]

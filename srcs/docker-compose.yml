@@ -9,7 +9,7 @@ services:
       - mariadb
       - adminer
     ports:
-      - "80:80"
+      - "443:443"
     volumes:
       - ~/data/web:/var/www/html
       # - ./web:/var/www/html
