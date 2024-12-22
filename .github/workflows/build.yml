@@ -21,10 +21,12 @@ jobs:
           echo "WP_EDITOR_USER=${{ secrets.WP_EDITOR_USER }}" >> srcs/.env
           echo "WP_EDITOR_PASS=${{ secrets.WP_EDITOR_PASS }}" >> srcs/.env
           echo "WP_EDITOR_EMAIL=${{ secrets.WP_EDITOR_EMAIL }}" >> srcs/.env
+      - name: Hosts
+        run: |
+          sudo cp /etc/hosts /etc/hosts.bak
+          echo "127.0.0.1 shmorish.42.fr" >> /etc/hosts
       - name: Deploy
         run: |
-          cp /etc/hosts /etc/hosts.bak
-          echo "127.0.0.1 shmorish.42.fr" >> /etc/hosts
           docker compose -f srcs/docker-compose.yml build
           docker compose -f srcs/docker-compose.yml up -d
           docker ps -a
