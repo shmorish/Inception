@@ -36,12 +36,9 @@ db:
 	docker exec -it mariadb bash
 
 clean:
-	$(COMPOSE) down --rmi all --volumes --remove-orphans
-	docker system prune -a
-	chmod 777 ~/data/db
-	rm -rf ~/data/db
-	chmod 777 ~/data/web
-	rm -rf ~/data/web
+	@$(COMPOSE) down --rmi all --volumes --remove-orphans
+	@docker system prune -a
+	@rm -rf ~/data/db ~/data/web || echo "Cannot remove ~/data/db ~/data/web, Use sudo rm -rf ~/data/db ~/data/web"
 
 re: down all
 
