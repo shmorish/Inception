@@ -38,7 +38,7 @@ db:
 clean:
 	@$(COMPOSE) down --rmi all --volumes --remove-orphans
 	@docker system prune -a
-	@rm -rf ~/data/db ~/data/web || echo "Cannot remove ~/data/db ~/data/web, Use sudo rm -rf ~/data/db ~/data/web"
+	@sudo rm -rf ~/data/db ~/data/web
 
 re: down all
 
