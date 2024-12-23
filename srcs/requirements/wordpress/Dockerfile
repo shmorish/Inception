@@ -14,4 +14,6 @@ RUN chmod +x /tmp/script.sh
 
 EXPOSE 9000
 
+VOLUME /var/www/html
+
 CMD [ "/tmp/script.sh" ]

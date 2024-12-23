@@ -11,8 +11,8 @@ services:
     ports:
       - "443:443"
     volumes:
-      - ~/data/web:/var/www/html
-      # - ./web:/var/www/html
+      - wp-volume:/var/www/html
+      # - ~/data/web:/var/www/html
     networks:
       inception:
 
@@ -22,8 +22,8 @@ services:
     depends_on:
       - mariadb
     volumes:
-      - ~/data/web:/var/www/html
-      # - ./web:/var/www/html
+      - wp-volume:/var/www/html
+      # - ~/data/web:/var/www/html
     networks:
       inception:
     environment:
@@ -44,8 +44,8 @@ services:
     build: requirements/mariadb/
     container_name: mariadb
     volumes:
-      - ~/data/db:/var/lib/mysql
-      # - ./db:/var/lib/mysql
+      - db-volume:/var/lib/mysql
+      # - ~/data/db:/var/lib/mysql
     networks:
       inception:
     environment:
@@ -60,6 +60,22 @@ services:
       - mariadb
     networks:
       inception:
+
+volumes:
+  wp-volume:
+    name: wp-volume
+    driver: local
+    driver_opts:
+      type: none
+      device: ${HOME}/data/web
+      o: bind
+  db-volume:
+    name: db-volume
+    driver: local
+    driver_opts:
+      type: bind
+      device: ${HOME}/data/db
+      o: bind
 
 networks:
   inception:

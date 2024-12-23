@@ -7,6 +7,7 @@ build:
 	$(COMPOSE) build
 
 up:
+	mkdir -p ~/data/db ~/data/web
 	$(COMPOSE) up -d
 
 down:
