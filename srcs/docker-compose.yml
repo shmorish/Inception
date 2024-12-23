@@ -59,7 +59,7 @@ services:
     depends_on:
       - mariadb
     networks:
-      - inception
+      inception:
 
 networks:
   inception:
