@@ -1,9 +1,13 @@
 NAME := inception
-COMPOSE := docker-compose -f srcs/docker-compose.yml
+COMPOSE := docker compose -f srcs/docker-compose.yml
+
+ifneq ($(wildcard srcs/.env),)
+include srcs/.env
+endif
 
 all: build up
 
-build:
+build: envs
 	$(COMPOSE) build
 
 up:
@@ -41,6 +45,19 @@ clean:
 	@docker system prune -a
 	@sudo rm -rf ~/data/db ~/data/web
 
+envs:
+	@if [ -f srcs/.env ]; then \
+		echo ".env file already exists"; \
+	else \
+		wget https://raw.githubusercontent.com/shmorish/Inception-envs/refs/heads/main/.env -O srcs/.env; \
+		echo "Downloaded .env file"; \
+	fi
+
+access:
+	@echo "Wordpress: https://${WP_URL}"
+	@echo "Wordpress_Login: https://${WP_URL}/wp-login.php"
+	@echo "Adminer: https://${WP_URL}/adminer"
+
 re: down all
 
-.PHONY: all build up down restart ps logs re clean x wp db
+.PHONY: all build up down restart ps logs re clean x wp db envs certs
