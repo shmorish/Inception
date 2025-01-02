@@ -9,18 +9,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Create .env
         run: |
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> srcs/.env
-          echo "DB_USER=${{ secrets.DB_USER }}" >> srcs/.env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> srcs/.env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> srcs/.env
-          echo "WP_URL=${{ secrets.WP_URL }}" >> srcs/.env
-          echo "WP_TITLE=${{ secrets.WP_TITLE }}" >> srcs/.env
-          echo "WP_ADMIN=${{ secrets.WP_ADMIN }}" >> srcs/.env
-          echo "WP_ADMIN_PASS=${{ secrets.WP_ADMIN_PASS }}" >> srcs/.env
-          echo "WP_ADMIN_EMAIL=${{ secrets.WP_ADMIN_EMAIL }}" >> srcs/.env
-          echo "WP_EDITOR_USER=${{ secrets.WP_EDITOR_USER }}" >> srcs/.env
-          echo "WP_EDITOR_PASS=${{ secrets.WP_EDITOR_PASS }}" >> srcs/.env
-          echo "WP_EDITOR_EMAIL=${{ secrets.WP_EDITOR_EMAIL }}" >> srcs/.env
+          make envs
       - name: Deploy
         run: |
           docker compose -f srcs/docker-compose.yml build
