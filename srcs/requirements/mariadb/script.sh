@@ -23,7 +23,7 @@ install() {
 main() {
     create_database
     install
-    mysqld
+    exec mysqld
 }
 
 main

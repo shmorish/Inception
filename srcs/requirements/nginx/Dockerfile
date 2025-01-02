@@ -2,7 +2,7 @@ FROM debian:bookworm
 # https://packages.debian.org/search?keywords=nginx
 
 RUN apt update && apt upgrade
-RUN apt install -y nginx openssl
+RUN apt install -y nginx openssl procps
 
 COPY default /etc/nginx/sites-available/
 
@@ -20,4 +20,6 @@ RUN openssl x509 -req -days 365 \
 
 EXPOSE 443
 
-CMD ["nginx", "-g", "daemon off;"]
+COPY script.sh /tmp/
+
+CMD ["bash", "/tmp/script.sh"]

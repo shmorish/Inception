@@ -57,7 +57,7 @@ function main {
             --allow-root \
             --path=$workdir
     fi
-    php-fpm8.2 -F
+    exec php-fpm8.2 -F
 }
 
 main
